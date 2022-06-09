@@ -66,6 +66,6 @@ private:
 	int32 sizeX = 0;
 	int32 sizeY = 0;
 	bool resetLimitOnce;
-	
+	float deathTimer = 0;
 
 };

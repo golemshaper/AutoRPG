@@ -40,7 +40,19 @@ void AHeroPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	timeSinceStart += DeltaTime;
-
+	deathTimer += DeltaTime;
+	//die over time to keep the player moving
+	if (deathTimer > 1)
+	{
+		deathTimer = 0;
+		curLife--;
+		if (curLife <= 0)
+		{
+			curLife = 0;
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE")) + FString::FromInt(curLife));
+			SetActive(false);
+		}
+	}
 	//Movement:
 	const FVector previousLoc = GetActorLocation();
 	BounceVector.Z = 0;
@@ -64,6 +76,7 @@ void AHeroPawn::Tick(float DeltaTime)
 	
 	if (curLife <= 0)
 	{
+		curLife = 0;
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE")) + FString::FromInt(curLife));
 
 		SetActive(false);
