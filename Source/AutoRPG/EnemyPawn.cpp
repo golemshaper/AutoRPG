@@ -3,7 +3,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "AutoRPGGameModeBase.h"
 
-
 // Sets default values
 AEnemyPawn::AEnemyPawn()
 {
@@ -30,26 +29,9 @@ void AEnemyPawn::BeginPlay()
 // Called every frame
 void AEnemyPawn::Tick(float DeltaTime)
 {
-
-	//---------
-
-
 	if (isInitialized == false)
 	{
-		//----------------------------
 		//RESETTER SETUP
-		/*UWorld* world = GetWorld();
-		if (world != NULL)
-		{
-			//AAutoRPGGameModeBase* GameMode = (AAutoRPGGameModeBase*)world->GetAuthGameMode();
-			if (GameMode != NULL) { 
-				if (GameMode->myHero != NULL){
-					GameMode->myHero->enemyActors.Add(this);
-					isInitialized = true;
-				}
-			}
-		}*/
-		//----------------------------
 		APawn* playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 		if (playerPawn == nullptr)return;
 		AHeroPawn* playerPawnAsHero = Cast<AHeroPawn>(playerPawn);
@@ -61,9 +43,6 @@ void AEnemyPawn::Tick(float DeltaTime)
 		}
 
 	}
-
-
-	//---------
 	Super::Tick(DeltaTime);
 	elapsedTime += DeltaTime;
 	dirChangeCounter += DeltaTime;
@@ -79,22 +58,15 @@ void AEnemyPawn::Tick(float DeltaTime)
 		
 	}
 	const FVector nPosition = GetActorLocation() + MovementDirection.GetSafeNormal(0.001f) * DeltaTime * speed;
-	
-	
-	//ZAlter = FVector(0, 0, HopVal * 4.0f);  //*
-	//SetActorLocation(nPosition + ZAlter, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
-	
-
 	SetActorLocation(nPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
-
 }
 
 // Called to bind functionality to input
 void AEnemyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
+
 void AEnemyPawn::ResetGame()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TEXT("Enemy reset")));
@@ -102,6 +74,7 @@ void AEnemyPawn::ResetGame()
 	SetActive(true);
 	SetActorLocation(initPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
 }
+
 void AEnemyPawn::DamageMe(int dmgAmount)
 {
 	curLife -= dmgAmount;
@@ -117,7 +90,6 @@ void AEnemyPawn::SetActive(bool isActive)
 	SetActorHiddenInGame(!activeSelf);
 	SetActorEnableCollision(activeSelf);
 	SetActorTickEnabled(activeSelf);
-	
 }
 
 bool AEnemyPawn::IsActive()

@@ -66,33 +66,17 @@ void AHeroPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	timeSinceStart += DeltaTime;
-	//Premovement stop:
-	if (screenLoc.X < 0)
-	{
-		MovementDirection.X = 0;
-	}
-	if (screenLoc.X > 1)
-	{
-		MovementDirection.X = 0;
-	}
-	if (screenLoc.Y < 0)
-	{
-		MovementDirection.Y = 0;
-	}
-	if (screenLoc.Y > 1)
-	{
-		MovementDirection.Y = 0;
-	}
 
 	//Movement:
 	const FVector previousLoc = GetActorLocation();
 	BounceVector.Z = 0;
 	
 	FVector nPosition = GetActorLocation() + (MovementDirection.GetSafeNormal(0.001f)+BounceVector)* DeltaTime * speed;
+	//hop over time using sine
 	float HopVal = FMath::Sin((timeSinceStart * 30));
+	//bounce off of enemies with this vector. Cut vector size over time.
 	BounceVector = FMath::Lerp(BounceVector, BounceVector*0.9f,0.5f);
 	
-	//const FVector zAlter = FVector(0, 0, FMath::Sin((timeSinceStart * 30) * MovementDirection.Length()) * 4.0f);  //*
 	const FVector zAlter = FVector(0,0, HopVal * MovementDirection.Length())*4.0f;  //*
 
 	if (MovementDirection.Length() <= 0.01f)
@@ -103,29 +87,6 @@ void AHeroPawn::Tick(float DeltaTime)
 	SetActorLocation(nPosition+ zAlter, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
 	GetWorld()->GetFirstLocalPlayerFromController()->GetPlayerController(GetWorld())->ProjectWorldLocationToScreen(nPosition, screenLoc, true);
 
-
-	//Screen Collision:
-	const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
-	screenLoc.X = screenLoc.X / ViewportSize.X;
-	screenLoc.Y = screenLoc.Y / ViewportSize.Y;
-
-	/*if (screenLoc.X < 0)
-	{
-		SetActorLocation(previousLoc, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
-	}
-	if (screenLoc.X > 1)
-	{
-		SetActorLocation(previousLoc, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
-	}
-	if (screenLoc.Y < 0)
-	{
-
-		SetActorLocation(previousLoc, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
-	}
-	if (screenLoc.Y > 1)
-	{
-		SetActorLocation(previousLoc, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
-	}*/
 	
 	if (curLife <= 0)
 	{
@@ -133,7 +94,6 @@ void AHeroPawn::Tick(float DeltaTime)
 
 		SetActive(false);
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("My Location is: %s"), *screenLoc.ToString()));
 }
 
 // Called to bind functionality to input
@@ -167,20 +127,16 @@ void AHeroPawn::ResetGame(float whatever)
 		curLife = maxLife;
 		SetActorLocation(initPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
 		SetActive(true);	
-
-		
 		if (enemyActors.IsEmpty() == false)
 		{
 			for (auto& enemy : enemyActors)
 			{
 				if (enemy == nullptr)continue;
+				//reset all registered enemies
 				enemy->ResetGame();
 			}
 			return;
 		}
-		
-
-		//todo: send message to all enemies 
 		resetLimitOnce = true;
 	}
 	else
@@ -193,15 +149,10 @@ void AHeroPawn::ResetGame(float whatever)
 
 void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//(this->GetLifeSpan()-5)
 	AEnemyPawn* enemyITouched = Cast<AEnemyPawn>(OtherActor);
-	
-	
 	if (enemyITouched!=NULL)
 	{
 		int enemyLife = enemyITouched->curLife;
-		//int heroLife = self->curLife;
-		//found an enemy to attack!
 		enemyITouched->DamageMe(this->atk);
 
 		this->curLife -= enemyITouched->atk;
@@ -212,11 +163,6 @@ void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 		{
 			this->LevelUp(enemyITouched->rewardHP);
 		}
-
-
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString(TEXT("ENEMY LIFE")) + FString::FromInt(enemyLife));
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE"))+FString::FromInt(this->curLife));
-
 	}
 }
 
