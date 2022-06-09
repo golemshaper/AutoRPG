@@ -31,34 +31,8 @@ AHeroPawn::AHeroPawn()
 void AHeroPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	initLifeValue = maxLife;
 	initPosition = GetActorLocation();
-	
-	//this is the source of the crash I think
-	//this is the source of the crash I think
-	//this is the source of the crash I think
-	//this is the source of the crash I think
-	/*UWorld* world = GetWorld();
-	if (world != nullptr)
-	{
-		AAutoRPGGameModeBase* GameMode = (AAutoRPGGameModeBase*)world->GetAuthGameMode();
-		if (GameMode != NULL)GameMode->myHero = this;
-	}*/
-	//this is the source of the crash I think
-	//this is the source of the crash I think
-	//this is the source of the crash I think
-	//this is the source of the crash I think
-
-
-/*
-https://stackoverflow.com/questions/57095288/how-do-i-get-ucameracomponent-from-acharacter-aplayercontroller
-TArray<UCameraComponent> CameraComps;
-	GetComponents<UCameraComponent>(CameraComps);
-	
-	*/
-
-
 }
 
 // Called every frame
