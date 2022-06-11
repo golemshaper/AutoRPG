@@ -51,7 +51,8 @@ public:
 		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	TArray<AEnemyPawn*> enemyActors;
-	
+	UFUNCTION(BlueprintCallable, Category = "Hero Stats")
+		FString GetStatsAsString();
 
 private:
 	UPROPERTY()//probably don't need these to be UPROPERTY anymore. I was seeing if it was the cause of a crash (it wasn't)

@@ -112,6 +112,7 @@ void AHeroPawn::ResetGame(float whatever)
 		if (resetLimitOnce)return;
 		maxLife = initLifeValue;
 		curLife = maxLife;
+		atk = 1;
 		SetActorLocation(initPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
 		SetActive(true);	
 		if (enemyActors.IsEmpty() == false)
@@ -151,6 +152,20 @@ void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 			this->LevelUp(enemyITouched->rewardHP);
 		}
 	}
+}
+
+FString AHeroPawn::GetStatsAsString()
+{
+	FString result = "HP:";
+	result.Append(FString::FromInt(curLife));
+	result.Append("/");
+	result.Append(FString::FromInt(maxLife));
+	result.Append("\n");
+	result.Append("ATK:");
+	result.Append(FString::FromInt(atk));
+
+
+	return result;
 }
 
 void AHeroPawn::LevelUp(int rewardHp)
