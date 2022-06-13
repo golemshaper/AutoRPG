@@ -24,6 +24,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero Stats")
 
 		
+	
 
 	float speed = 500;
 	int initLifeValue = 50;

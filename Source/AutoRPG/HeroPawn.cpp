@@ -56,7 +56,19 @@ void AHeroPawn::Tick(float DeltaTime)
 	//Movement:
 	const FVector previousLoc = GetActorLocation();
 	BounceVector.Z = 0;
-	
+	///SetActorRotation(FQuat::MakeFromEuler(MovementDirection));
+	//SetActorRotation(FRotator::MakeFromEuler(MovementDirection.GetSafeNormal()));
+	//const FRotator Rotation = Controller->GetControlRotation();
+
+	//ROT::
+	float stickX = MovementDirection.X;
+	float stickY = MovementDirection.Y;
+	FVector stickVector = FVector(stickX, stickY, 0);
+	FQuat lastRotation = stickVector.Rotation().Quaternion();
+	SetActorRotation(lastRotation, ETeleportType::TeleportPhysics);
+	//ROT::
+
+
 	FVector nPosition = GetActorLocation() + (MovementDirection.GetSafeNormal(0.001f)+BounceVector)* DeltaTime * speed;
 	//hop over time using sine
 	float HopVal = FMath::Sin((timeSinceStart * 30));
