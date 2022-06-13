@@ -75,7 +75,7 @@ void AHeroPawn::Tick(float DeltaTime)
 
 	FVector nPosition = GetActorLocation() + (MovementDirection.GetSafeNormal(0.001f)+BounceVector)* DeltaTime * speed;
 	//hop over time using sine
-	float HopVal = FMath::Sin((timeSinceStart * 30));
+	float HopVal = FMath::Sin((timeSinceStart * 30))*0.5f;
 	//bounce off of enemies with this vector. Cut vector size over time.
 	BounceVector = FMath::Lerp(BounceVector, BounceVector*0.9f,0.5f);
 	
