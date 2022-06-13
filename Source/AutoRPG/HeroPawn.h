@@ -60,6 +60,7 @@ private:
 	FVector initPosition;
 	UPROPERTY()
 	FVector MovementDirection;
+	FVector RotationVectorOverTime;
 	UPROPERTY()
 	FVector BounceVector;
 
