@@ -11,6 +11,7 @@ ADamageDisplayActor::ADamageDisplayActor()
 
 	UTextRenderComponent* textComponent = CreateAbstractDefaultSubobject<UTextRenderComponent>(TEXT("TextComponent"));
 	textReference = textComponent;
+	
 }
 
 // Called when the game starts or when spawned
@@ -24,13 +25,32 @@ void ADamageDisplayActor::BeginPlay()
 void ADamageDisplayActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	timer += DeltaTime;
+	if (timer >= 1.0f)
+	{
+		timer = 0.0f;
+		Destroy();
+		//SetActive(false);
+	}
 }
 
 void ADamageDisplayActor::SetDamageValue(int dmg)
 {
 	if (textReference == nullptr)return;
-	
+	SetActive(true);
 	textReference->SetText(FText::FromString(FString::FromInt(dmg)));
 }
 
+
+void ADamageDisplayActor::SetActive(bool isActive)
+{
+	activeSelf = isActive;
+	SetActorHiddenInGame(!activeSelf);
+	SetActorEnableCollision(activeSelf);
+	SetActorTickEnabled(activeSelf);
+}
+
+bool ADamageDisplayActor::IsActive()
+{
+	return activeSelf;
+}

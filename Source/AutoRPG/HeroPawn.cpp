@@ -4,6 +4,7 @@
 #include "HeroPawn.h"
 #include "Components/SphereComponent.h"
 #include "Camera/CameraComponent.h"
+#include "DamageDisplayActor.h"
 #include "EnemyPawn.h"
 #include "AutoRPGGameModeBase.h"
 // Sets default values
@@ -163,6 +164,17 @@ void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 		this->BounceVector = this->GetActorLocation() - enemyITouched->GetActorLocation();
 		this->BounceVector.Normalize();
 		this->BounceVector = this->BounceVector * 2.0f;
+
+		const FRotator spawn_rotation = FRotator();
+		//hurt player display
+		auto playerDamage=GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), this->GetActorLocation(), spawn_rotation);
+		playerDamage->SetDamageValue(enemyITouched->atk);
+		//Hurt enemy display
+		auto enemyDamage = GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), enemyITouched->GetActorLocation(), spawn_rotation);
+		enemyDamage->SetDamageValue(this->atk);
+
+
+
 		if (enemyITouched->curLife <= 0)
 		{
 			this->LevelUp(enemyITouched->rewardHP);

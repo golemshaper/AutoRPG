@@ -20,10 +20,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	float timer = 0.0f;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable, Category = "Game Display")
 	void SetDamageValue(int dmg);
+	void SetActive(bool isActive);
+	bool IsActive();
+	UPROPERTY()
+		bool activeSelf;
 };
