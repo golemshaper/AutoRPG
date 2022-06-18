@@ -14,6 +14,10 @@ class AUTORPG_API ADamageDisplayActor : public AActor
 	
 public:	
 	UTextRenderComponent* textReference = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Display")
+	UTextRenderComponent* textTEST;
+
 	// Sets default values for this actor's properties
 	ADamageDisplayActor();
 
@@ -26,6 +30,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable, Category = "Game Display")
 	void SetDamageValue(int dmg);
+	FVector offset;
 	void SetActive(bool isActive);
 	bool IsActive();
 	UPROPERTY()

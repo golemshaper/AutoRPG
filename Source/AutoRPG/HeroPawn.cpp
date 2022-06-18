@@ -12,20 +12,12 @@ AHeroPawn::AHeroPawn()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	//https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/CPPTutorials/Components/
 	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
 	RootComponent = SphereComponent;
 	SphereComponent->InitSphereRadius(40.0f);
 	SphereComponent->SetCollisionProfileName(TEXT("Pawn"));
-	//SphereComponent->OnComponentHit.AddDynamic(this, &AHeroPawn::OnCompHit);
 	SphereComponent->OnComponentHit.AddDynamic(this, &AHeroPawn::OnCompHit);
 	resetLimitOnce = false;
-	
-	//..
-	//UCameraComponent* CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CAM"));
-
-
-
 }
 
 // Called when the game starts or when spawned
@@ -58,10 +50,9 @@ void AHeroPawn::Tick(float DeltaTime)
 	const FVector previousLoc = GetActorLocation();
 	BounceVector.Z = 0;
 
-	//ROT::--------------------------------------------------------------------------
+	//ROTATION--------------------------------------------------------------------------
 	float stickX = MovementDirection.X;
 	float stickY = MovementDirection.Y;
-	
 	FVector stickVector = FVector(stickX, stickY, 0);
 	RotationVectorOverTime = FMath::Lerp(RotationVectorOverTime, stickVector, 4*DeltaTime);
 	FQuat lastRotation = RotationVectorOverTime.Rotation().Quaternion();
@@ -70,8 +61,7 @@ void AHeroPawn::Tick(float DeltaTime)
 	{
 		SetActorRotation(lastRotation, ETeleportType::TeleportPhysics);
 	}
-
-	//ROT::----------------------------------------------------------------------
+	//ROTATION--------------------------------------------------------------------------
 
 
 	FVector nPosition = GetActorLocation() + (MovementDirection.GetSafeNormal(0.001f)+BounceVector)* DeltaTime * speed;
@@ -94,7 +84,7 @@ void AHeroPawn::Tick(float DeltaTime)
 	if (curLife <= 0)
 	{
 		curLife = 0;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE")) + FString::FromInt(curLife));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE")) + FString::FromInt(curLife));
 
 		SetActive(false);
 	}
@@ -151,7 +141,7 @@ void AHeroPawn::ResetGame(float whatever)
 	
 }
 
-
+//Collision
 void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	AEnemyPawn* enemyITouched = Cast<AEnemyPawn>(OtherActor);
@@ -166,13 +156,21 @@ void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 		this->BounceVector = this->BounceVector * 2.0f;
 
 		const FRotator spawn_rotation = FRotator();
+		//--
 		//hurt player display
 		auto playerDamage=GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), this->GetActorLocation(), spawn_rotation);
 		playerDamage->SetDamageValue(enemyITouched->atk);
-		//Hurt enemy display
-		auto enemyDamage = GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), enemyITouched->GetActorLocation(), spawn_rotation);
+		//--
+		//hurt enemy display
+		FVector enemy_origin;
+		FVector enemy_bounds;
+		enemy_bounds.X = 0;
+		enemy_bounds.Y = 0;
+					//get enemy bounds for different size monsters
+		enemyITouched->GetActorBounds(false,enemy_origin,enemy_bounds,false);
+		auto enemyDamage = GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), enemyITouched->GetActorLocation()+ enemy_bounds, spawn_rotation);
 		enemyDamage->SetDamageValue(this->atk);
-
+		//--
 
 
 		if (enemyITouched->curLife <= 0)
@@ -198,7 +196,7 @@ FString AHeroPawn::GetStatsAsString()
 
 void AHeroPawn::LevelUp(int rewardHp)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString(TEXT("level up")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString(TEXT("level up")));
 
 	maxLife += rewardHp;
 	curLife += rewardHp;
@@ -207,7 +205,7 @@ void AHeroPawn::LevelUp(int rewardHp)
 
 void AHeroPawn::SetActive(bool isActive)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString(TEXT("ACTIVE STATUS CHANGED")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString(TEXT("ACTIVE STATUS CHANGED")));
 
 	activeSelf = isActive;
 	SetActorHiddenInGame(!activeSelf);

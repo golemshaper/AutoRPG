@@ -5,13 +5,12 @@
 ADamageDisplayActor::ADamageDisplayActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	
 	PrimaryActorTick.bCanEverTick = true;
-	//USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
-	//RootComponent = SphereComponent;
-
 	UTextRenderComponent* textComponent = CreateAbstractDefaultSubobject<UTextRenderComponent>(TEXT("TextComponent"));
 	textReference = textComponent;
-	
+	offset = FVector(0, 0, 1.0f);
+
 }
 
 // Called when the game starts or when spawned
@@ -26,10 +25,14 @@ void ADamageDisplayActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	timer += DeltaTime;
+	FVector mover = GetActorLocation() + (offset *100* DeltaTime);
+	SetActorLocation(mover);
+
 	if (timer >= 1.0f)
 	{
 		timer = 0.0f;
 		Destroy();
+		//Set active will be used later when I set up an object pool for the spawn values
 		//SetActive(false);
 	}
 }
@@ -40,7 +43,6 @@ void ADamageDisplayActor::SetDamageValue(int dmg)
 	SetActive(true);
 	textReference->SetText(FText::FromString(FString::FromInt(dmg)));
 }
-
 
 void ADamageDisplayActor::SetActive(bool isActive)
 {
