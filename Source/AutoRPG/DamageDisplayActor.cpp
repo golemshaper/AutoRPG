@@ -5,12 +5,10 @@
 ADamageDisplayActor::ADamageDisplayActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	
 	PrimaryActorTick.bCanEverTick = true;
 	UTextRenderComponent* textComponent = CreateAbstractDefaultSubobject<UTextRenderComponent>(TEXT("TextComponent"));
 	textReference = textComponent;
 	offset = FVector(0, 0, 1.0f);
-
 }
 
 // Called when the game starts or when spawned

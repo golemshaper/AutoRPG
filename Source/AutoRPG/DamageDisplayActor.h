@@ -14,10 +14,8 @@ class AUTORPG_API ADamageDisplayActor : public AActor
 	
 public:	
 	UTextRenderComponent* textReference = nullptr;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Display")
 	UTextRenderComponent* textTEST;
-
 	// Sets default values for this actor's properties
 	ADamageDisplayActor();
 

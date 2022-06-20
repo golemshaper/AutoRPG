@@ -8,7 +8,6 @@ AEnemyPawn::AEnemyPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -20,10 +19,6 @@ void AEnemyPawn::BeginPlay()
 	MovementDirection.Y = 0;
 	initPosition = GetActorLocation();
 	initLife = curLife;
-	
-	
-
-	
 }
 
 // Called every frame
@@ -41,7 +36,6 @@ void AEnemyPawn::Tick(float DeltaTime)
 			initPosition = GetActorLocation();
 			isInitialized = true;
 		}
-
 	}
 	Super::Tick(DeltaTime);
 	elapsedTime += DeltaTime;
@@ -49,13 +43,11 @@ void AEnemyPawn::Tick(float DeltaTime)
 	float HopVal = FMath::Sin((elapsedTime * 12));
 	if (dirChangeCounter >= 0.25f)
 	{
-		//elapsedTime = 0;
 		dirChangeCounter = 0;
 		int directionX = FMath::RandRange(-1, 1);
 		int directionY= FMath::RandRange(-1, 1);
 		MovementDirection.X = directionX;
 		MovementDirection.Y = directionY;
-		
 	}
 	const FVector nPosition = GetActorLocation() + MovementDirection.GetSafeNormal(0.001f) * DeltaTime * speed;
 	SetActorLocation(nPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
@@ -69,7 +61,7 @@ void AEnemyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void AEnemyPawn::ResetGame()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TEXT("Enemy reset")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TEXT("Enemy reset")));
 	curLife = initLife;
 	SetActive(true);
 	SetActorLocation(initPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
