@@ -42,7 +42,7 @@ void AHeroPawn::Tick(float DeltaTime)
 		if (curLife <= 0)
 		{
 			curLife = 0;
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE")) + FString::FromInt(curLife));
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE")) + FString::FromInt(curLife));
 			SetActive(false);
 		}
 	}
@@ -63,7 +63,6 @@ void AHeroPawn::Tick(float DeltaTime)
 	}
 	//ROTATION--------------------------------------------------------------------------
 
-
 	FVector nPosition = GetActorLocation() + (MovementDirection.GetSafeNormal(0.001f)+BounceVector)* DeltaTime * speed;
 	//hop over time using sine
 	float HopVal = FMath::Sin((timeSinceStart * 30))*0.5f;
@@ -76,16 +75,12 @@ void AHeroPawn::Tick(float DeltaTime)
 	{
 		nPosition.Z = initPosition.Z;
 	}
-
 	SetActorLocation(nPosition+ zAlter, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
 	GetWorld()->GetFirstLocalPlayerFromController()->GetPlayerController(GetWorld())->ProjectWorldLocationToScreen(nPosition, screenLoc, true);
-
 	
 	if (curLife <= 0)
 	{
 		curLife = 0;
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("HERO LIFE")) + FString::FromInt(curLife));
-
 		SetActive(false);
 	}
 }
@@ -101,14 +96,11 @@ void AHeroPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 //axis is all Effed up until I get reletive to camera
 void AHeroPawn::MoveForward(float moveY)
 {
-
-	//MovementDir.X = moveY;
 	MovementDirection.X = -moveY;
 }
 
 void AHeroPawn::MoveRight(float moveX)
 {
-	//MovementDir.Y = moveX;
 	MovementDirection.Y = -moveX;
 }
 
@@ -138,7 +130,6 @@ void AHeroPawn::ResetGame(float whatever)
 	{
 		resetLimitOnce = false;
 	}
-	
 }
 
 //Collision
@@ -147,38 +138,44 @@ void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 	AEnemyPawn* enemyITouched = Cast<AEnemyPawn>(OtherActor);
 	if (enemyITouched!=NULL)
 	{
-		int enemyLife = enemyITouched->curLife;
-		enemyITouched->DamageMe(this->atk);
-
-		this->curLife -= enemyITouched->atk;
-		this->BounceVector = this->GetActorLocation() - enemyITouched->GetActorLocation();
-		this->BounceVector.Normalize();
-		this->BounceVector = this->BounceVector * 2.0f;
-
-		const FRotator spawn_rotation = FRotator();
-		//--
-		//hurt player display
-		auto playerDamage=GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), this->GetActorLocation(), spawn_rotation);
-		playerDamage->SetDamageValue(enemyITouched->atk);
-		//--
-		//hurt enemy display
-		FVector enemy_origin;
-		FVector enemy_bounds;
-		enemy_bounds.X = 0;
-		enemy_bounds.Y = 0;
-					//get enemy bounds for different size monsters
-		enemyITouched->GetActorBounds(false,enemy_origin,enemy_bounds,false);
-		auto enemyDamage = GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), enemyITouched->GetActorLocation()+ enemy_bounds, spawn_rotation);
-		enemyDamage->SetDamageValue(this->atk);
-		//--
-
-
-		if (enemyITouched->curLife <= 0)
-		{
-			this->LevelUp(enemyITouched->rewardHP);
-		}
+		BattleEnemy(enemyITouched);
 	}
 }
+void AHeroPawn::BattleEnemy(AEnemyPawn* enemyITouched)
+{
+	//Required variables
+	const FRotator spawn_rotation = FRotator(0,0,0);
+	FVector enemy_origin;
+	FVector enemy_bounds;
+	enemy_bounds.X = 0;
+	enemy_bounds.Y = 0;
+
+	//Damage hand out.
+	enemyITouched->DamageMe(this->atk);
+	this->curLife -= enemyITouched->atk;
+
+	//Bounce the hero
+	this->BounceVector = this->GetActorLocation() - enemyITouched->GetActorLocation();
+	this->BounceVector.Normalize();
+	this->BounceVector = this->BounceVector * 2.0f;
+
+	//Hurt player display
+	auto playerDamage = GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), this->GetActorLocation(), spawn_rotation);
+	playerDamage->SetDamageValue(enemyITouched->atk);
+
+	//Get enemy bounds for different size monsters
+	enemyITouched->GetActorBounds(false, enemy_origin, enemy_bounds, false);
+
+	//Hurt enemy display
+	auto enemyDamage = GetWorld()->SpawnActor<ADamageDisplayActor>(ADamageDisplayActor::StaticClass(), enemyITouched->GetActorLocation() + enemy_bounds, spawn_rotation);
+	enemyDamage->SetDamageValue(this->atk);
+
+	//Level up if the enemy is defeated
+	if (enemyITouched->curLife <= 0)
+	{
+		this->LevelUp(enemyITouched->rewardHP);
+	}
+}	
 
 FString AHeroPawn::GetStatsAsString()
 {
@@ -189,24 +186,20 @@ FString AHeroPawn::GetStatsAsString()
 	result.Append("\n");
 	result.Append("ATK:");
 	result.Append(FString::FromInt(atk));
-
-
 	return result;
 }
 
 void AHeroPawn::LevelUp(int rewardHp)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString(TEXT("level up")));
-
 	maxLife += rewardHp;
 	curLife += rewardHp;
 	atk += FMath::RandRange(1, 3);
 }
 
+
 void AHeroPawn::SetActive(bool isActive)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString(TEXT("ACTIVE STATUS CHANGED")));
-
 	activeSelf = isActive;
 	SetActorHiddenInGame(!activeSelf);
 	SetActorEnableCollision(activeSelf);

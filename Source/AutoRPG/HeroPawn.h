@@ -46,6 +46,7 @@ public:
 	void ResetGame(float whatever);
 	void SetActive(bool isActive);
 	void LevelUp(int rewardHp);
+	void BattleEnemy(AEnemyPawn* enemyITouched);
 	bool IsActive();
 
 	UFUNCTION()
