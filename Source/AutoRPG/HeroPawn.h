@@ -36,7 +36,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AExplosionFXActor> SpawnOnDeath;
-
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AExplosionFXActor> SpawnOnLevelUp;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

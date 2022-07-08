@@ -195,6 +195,7 @@ void AHeroPawn::BattleEnemy(AEnemyPawn* enemyITouched)
 	//Level up if the enemy is defeated
 	if (enemyITouched->curLife <= 0)
 	{
+		//death fx
 		if (SpawnOnDeath)
 		{
 			UWorld* world = GetWorld();
@@ -203,7 +204,17 @@ void AHeroPawn::BattleEnemy(AEnemyPawn* enemyITouched)
 				world->SpawnActor<AExplosionFXActor>(SpawnOnDeath, enemyITouched->GetActorLocation(), spawn_rotation);
 			}
 		}
+		//level up
 		this->LevelUp(enemyITouched->rewardHP);
+		//level up fx
+		if (SpawnOnLevelUp)
+		{
+			UWorld* world = GetWorld();
+			if (world)
+			{
+				world->SpawnActor<AExplosionFXActor>(SpawnOnLevelUp, this->GetActorLocation(), spawn_rotation);
+			}
+		}
 	}
 }	
 
