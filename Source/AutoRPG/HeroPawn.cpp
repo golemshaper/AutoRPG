@@ -1,6 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "HeroPawn.h"
 #include "Components/SphereComponent.h"
 #include "Camera/CameraComponent.h"
@@ -237,8 +235,6 @@ void AHeroPawn::LevelUp(int rewardHp)
 	curLife += rewardHp;
 	atk += FMath::RandRange(1, 3);
 }
-
-
 
 void AHeroPawn::SetActive(bool isActive)
 {
