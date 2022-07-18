@@ -4,7 +4,9 @@
 #include "Camera/CameraComponent.h"
 #include "DamageDisplayActor.h"
 #include "EnemyPawn.h"
+#include "ShrineActor.h"
 #include "AutoRPGGameModeBase.h"
+
 // Sets default values
 AHeroPawn::AHeroPawn()
 {
@@ -128,11 +130,20 @@ void AHeroPawn::ResetGame(float whatever)
 	if (whatever > 0)
 	{
 		if (resetLimitOnce)return;
+		//Shrines
+		for (auto& shrine : shrineAry)
+		{
+			if (shrine == nullptr)continue;
+			//reset all registered enemies
+			shrine->OnReset();
+		}
+		//Player Stats
 		maxLife = initLifeValue;
 		curLife = maxLife;
 		atk = 1;
 		SetActorLocation(initPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
-		SetActive(true);	
+		SetActive(true);
+		//Enemies
 		if (enemyActors.IsEmpty() == false)
 		{
 			for (auto& enemy : enemyActors)
@@ -149,6 +160,7 @@ void AHeroPawn::ResetGame(float whatever)
 	{
 		resetLimitOnce = false;
 	}
+	
 }
 
 //Collision
@@ -158,6 +170,19 @@ void AHeroPawn::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 	if (enemyITouched!=NULL)
 	{
 		BattleEnemy(enemyITouched);
+		return;
+	}
+	AShrineActor* shrineTouched = Cast<AShrineActor>(OtherActor);
+	if (shrineTouched != NULL)
+	{
+		if (shrineTouched->markAsUsed)
+		{
+			//shrine can only be used once.
+			return;
+		}
+		int restoreAmount = shrineTouched->RestorePercentage;
+		shrineTouched->OnShrineUsed();
+		this->curLife = (restoreAmount * this->maxLife)/100;
 	}
 }
 void AHeroPawn::BattleEnemy(AEnemyPawn* enemyITouched)

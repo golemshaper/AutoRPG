@@ -6,7 +6,9 @@
 #include "GameFramework/Pawn.h"
 #include "EnemyPawn.h"
 #include "ExplosionFXActor.h"
+#include "ShrineActor.h"
 #include "HeroPawn.generated.h"
+
 
 UCLASS()
 class AUTORPG_API AHeroPawn : public APawn
@@ -56,6 +58,8 @@ public:
 	TArray<AEnemyPawn*> enemyActors;
 	UFUNCTION(BlueprintCallable, Category = "Hero Stats")
 		FString GetStatsAsString();
+	TArray<AShrineActor*> shrineAry;
+
 private:
 	UPROPERTY()//probably don't need these to be UPROPERTY anymore. I was seeing if it was the cause of a crash (it wasn't)
 	FVector initPosition;
