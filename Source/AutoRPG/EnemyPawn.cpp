@@ -64,7 +64,7 @@ void AEnemyPawn::ResetGame()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TEXT("Enemy reset")));
 	curLife = initLife;
 	SetActive(true);
-	SetActorLocation(initPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
+	SetActorLocation(initPosition, false, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
 }
 
 void AEnemyPawn::DamageMe(int dmgAmount)

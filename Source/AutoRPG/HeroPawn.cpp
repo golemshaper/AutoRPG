@@ -141,7 +141,7 @@ void AHeroPawn::ResetGame(float whatever)
 		maxLife = initLifeValue;
 		curLife = maxLife;
 		atk = 1;
-		SetActorLocation(initPosition, true, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
+		SetActorLocation(initPosition, false, (FHitResult*)nullptr, ETeleportType::TeleportPhysics);
 		SetActive(true);
 		//Enemies
 		if (enemyActors.IsEmpty() == false)
