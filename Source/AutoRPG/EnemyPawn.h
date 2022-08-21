@@ -27,7 +27,10 @@ public:
 	int atk = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Stats")
 	int rewardHP = 10;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Stats")
+	float skitishness = 0.25f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Stats")
+	float speed =50.0f;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -37,7 +40,7 @@ public:
 	FVector MovementDirection;
 	UPROPERTY()
 	FVector ZAlter;
-	float speed;
+	
 	float dirChangeCounter;
 	double elapsedTime;
 	UPROPERTY()

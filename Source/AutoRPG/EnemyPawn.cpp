@@ -14,7 +14,7 @@ AEnemyPawn::AEnemyPawn()
 void AEnemyPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	speed = 50;
+	//speed = 50;
 	MovementDirection.X = 1;
 	MovementDirection.Y = 0;
 	initPosition = GetActorLocation();
@@ -41,7 +41,7 @@ void AEnemyPawn::Tick(float DeltaTime)
 	elapsedTime += DeltaTime;
 	dirChangeCounter += DeltaTime;
 	float HopVal = FMath::Sin((elapsedTime * 12));
-	if (dirChangeCounter >= 0.25f)
+	if (dirChangeCounter >= skitishness)
 	{
 		dirChangeCounter = 0;
 		int directionX = FMath::RandRange(-1, 1);
